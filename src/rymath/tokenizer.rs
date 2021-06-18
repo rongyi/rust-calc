@@ -7,7 +7,7 @@ pub struct Tokenizer<'a> {
 }
 
 impl<'a> Tokenizer<'a> {
-    fn new(expr: &'a str) -> Self {
+    pub fn new(expr: &'a str) -> Self {
         Tokenizer {
             expr: expr.chars().peekable(),
         }
@@ -30,6 +30,13 @@ impl<'a> Iterator for Tokenizer<'a> {
                 }
                 Some(Token::Num(num.parse::<f64>().unwrap()))
             }
+            Some('+') => Some(Token::Add),
+            Some('-') => Some(Token::Sub),
+            Some('*') => Some(Token::Mul),
+            Some('/') => Some(Token::Div),
+            Some('^') => Some(Token::Caret),
+            Some('(') => Some(Token::LeftParen),
+            Some(')') => Some(Token::RightParen),
             None => Some(Token::EOF),
             Some(_) => None,
         }
@@ -56,8 +63,15 @@ mod tests {
     }
 
     #[test]
-    fn test_todo() {
-        let mut t = Tokenizer::new("+");
-        assert_eq!(t.next(), None);
+    fn test_add_sub() {
+        let mut t = Tokenizer::new("+-*/^()");
+        assert_eq!(t.next().unwrap(), Token::Add);
+        assert_eq!(t.next().unwrap(), Token::Sub);
+        assert_eq!(t.next().unwrap(), Token::Mul);
+        assert_eq!(t.next().unwrap(), Token::Div);
+        assert_eq!(t.next().unwrap(), Token::Caret);
+        assert_eq!(t.next().unwrap(), Token::LeftParen);
+        assert_eq!(t.next().unwrap(), Token::RightParen);
+        assert_eq!(t.next().unwrap(), Token::EOF);
     }
 }
